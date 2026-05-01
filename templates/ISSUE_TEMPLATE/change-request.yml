@@ -1,0 +1,65 @@
+name: Harness Change Request
+description: Turn a requirement into a deterministic implementation task
+title: "[Change]: "
+labels: ["status:needs-triage"]
+body:
+  - type: textarea
+    id: requirement
+    attributes:
+      label: Requirement
+      description: Describe the request and context.
+    validations:
+      required: true
+
+  - type: textarea
+    id: contract
+    attributes:
+      label: Structured work contract
+      description: Describe deterministic input, output, rules, and constraints.
+      placeholder: |
+        Input:
+        - ...
+
+        Output:
+        - ...
+
+        Rules:
+        - ...
+
+        Constraints:
+        - ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance
+      description: Deterministic criteria that prove completion.
+    validations:
+      required: true
+
+  - type: textarea
+    id: verification
+    attributes:
+      label: Verification
+      description: Commands, fixtures, replay checks, or deterministic evidence.
+    validations:
+      required: true
+
+  - type: textarea
+    id: micro-plan
+    attributes:
+      label: Micro-plan
+      description: Smallest coherent steps with expected files and expected signals.
+    validations:
+      required: true
+
+  - type: textarea
+    id: guardrails
+    attributes:
+      label: Guardrails
+      description: Forbidden behavior, safety boundaries, and human gates.
+    validations:
+      required: true
+

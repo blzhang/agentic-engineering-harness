@@ -1,0 +1,35 @@
+name: Harness Bug Report
+description: Report a reproducible defect
+title: "[Bug]: "
+labels: ["type:bug", "status:needs-triage"]
+body:
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction
+      description: Commands, fixture, inputs, or exact steps.
+    validations:
+      required: true
+
+  - type: textarea
+    id: regression
+    attributes:
+      label: Regression check
+      description: The failing test, fixture, or deterministic command that should catch this bug.
+    validations:
+      required: true
+

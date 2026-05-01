@@ -1,0 +1,4 @@
+interface:
+  display_name: "Agentic Engineering Harness"
+  short_description: "Human-gated AI coding workflow."
+  default_prompt: "Use the Agentic Engineering Harness to turn this requirement into a PRD or ready Issue, then guide serial implementation with test-first evidence and automatic review."

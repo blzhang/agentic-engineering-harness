@@ -1,0 +1,22 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  placeholder:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Explain project CI
+        run: |
+          echo "Replace this placeholder with project-specific deterministic checks."
+          echo "The harness requires CI, but does not prescribe a language stack."
+
