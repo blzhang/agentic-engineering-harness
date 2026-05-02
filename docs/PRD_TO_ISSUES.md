@@ -13,7 +13,8 @@ Approved PRDs and version plans are the source of truth for product intent. Issu
 5. Copy relevant acceptance criteria and guardrails into each Issue.
 6. Add a deterministic verification plan.
 7. Add a micro-plan.
-8. Mark generated Issues ready only when they do not change scope or introduce ambiguity.
+8. Assign the target base branch, usually the active `version/vNext` branch.
+9. Mark generated Issues ready only when they do not change scope or introduce ambiguity.
 
 ## When To Ask Human
 
@@ -24,4 +25,3 @@ Ask the human before marking ready when:
 - the Issue narrows or expands the plan materially;
 - deterministic verification cannot be specified;
 - risk boundaries are unclear.
-

@@ -1,0 +1,31 @@
+{
+  "comments": [
+    {
+      "author": {
+        "login": "owner"
+      },
+      "body": "@codex review for requirements compliance",
+      "createdAt": "2026-05-02T12:00:00Z",
+      "url": "https://github.com/example/repo/pull/10#issuecomment-1"
+    }
+  ],
+  "isDraft": false,
+  "number": 10,
+  "reviewDecision": "",
+  "reviews": [],
+  "state": "OPEN",
+  "statusCheckRollup": [
+    {
+      "name": "OpenAI Review",
+      "workflowName": "Codex",
+      "status": "COMPLETED",
+      "conclusion": "SUCCESS",
+      "completedAt": "2026-05-02T12:03:00Z",
+      "app": {
+        "slug": "openai",
+        "name": "OpenAI"
+      }
+    }
+  ],
+  "url": "https://github.com/example/repo/pull/10"
+}

@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - main
+      - "version/**"
   workflow_dispatch:
 
 permissions:
@@ -19,4 +20,3 @@ jobs:
         run: |
           echo "Replace this placeholder with project-specific deterministic checks."
           echo "The harness requires CI, but does not prescribe a language stack."
-

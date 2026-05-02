@@ -1,0 +1,19 @@
+{
+  "comments": [
+    {
+      "author": {
+        "login": "owner"
+      },
+      "body": "@codex review for requirements compliance",
+      "createdAt": "2026-05-02T13:33:40Z",
+      "url": "https://github.com/example/repo/pull/4#issuecomment-1"
+    }
+  ],
+  "isDraft": false,
+  "number": 4,
+  "reviewDecision": "",
+  "reviews": [],
+  "state": "OPEN",
+  "statusCheckRollup": [],
+  "url": "https://github.com/example/repo/pull/4"
+}

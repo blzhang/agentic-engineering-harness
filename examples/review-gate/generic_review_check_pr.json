@@ -1,0 +1,30 @@
+{
+  "comments": [
+    {
+      "author": {
+        "login": "owner"
+      },
+      "body": "@codex review for requirements compliance",
+      "createdAt": "2026-05-02T13:33:40Z",
+      "url": "https://github.com/example/repo/pull/8#issuecomment-1"
+    }
+  ],
+  "isDraft": false,
+  "number": 8,
+  "reviewDecision": "",
+  "reviews": [],
+  "state": "OPEN",
+  "statusCheckRollup": [
+    {
+      "name": "dependency-review",
+      "workflowName": "security review",
+      "status": "COMPLETED",
+      "conclusion": "SUCCESS",
+      "app": {
+        "slug": "github-actions",
+        "name": "GitHub Actions"
+      }
+    }
+  ],
+  "url": "https://github.com/example/repo/pull/8"
+}

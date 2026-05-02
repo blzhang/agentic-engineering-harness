@@ -32,10 +32,14 @@ def main() -> int:
     mapping = {
         TEMPLATES / "AGENTS.md": target / "AGENTS.md",
         TEMPLATES / "GITHUB_HARNESS_WORKFLOW.md": target / "docs" / "GITHUB_HARNESS_WORKFLOW.md",
+        ROOT / "docs" / "AGENT_RUN_LIFECYCLE.md": target / "docs" / "AGENT_RUN_LIFECYCLE.md",
+        ROOT / "docs" / "PRD_EXECUTION_LOOP.md": target / "docs" / "PRD_EXECUTION_LOOP.md",
+        ROOT / "docs" / "VERSION_BRANCH_WORKFLOW.md": target / "docs" / "VERSION_BRANCH_WORKFLOW.md",
         TEMPLATES / "pull_request_template.md": target / ".github" / "pull_request_template.md",
         TEMPLATES / "ISSUE_TEMPLATE" / "change-request.yml": target / ".github" / "ISSUE_TEMPLATE" / "change-request.yml",
         TEMPLATES / "ISSUE_TEMPLATE" / "bug-report.yml": target / ".github" / "ISSUE_TEMPLATE" / "bug-report.yml",
         TEMPLATES / "workflows" / "ci.yml": target / ".github" / "workflows" / "ci.yml",
+        ROOT / "scripts" / "check_github_review_gate.py": target / "scripts" / "check_github_review_gate.py",
     }
     for src, dst in mapping.items():
         copy_file(src, dst, args.overwrite)
@@ -44,4 +48,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

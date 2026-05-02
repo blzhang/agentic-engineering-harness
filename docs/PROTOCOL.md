@@ -18,16 +18,18 @@ natural-language requirement
   -> human requirement confirmation
   -> agent drafts PRD or version plan
   -> human approves plan
+  -> version integration branch is created or selected
   -> agent generates structured Issues from approved plan
   -> one ready Issue is selected
-  -> agent creates branch
+  -> agent creates isolated worktree and task branch
   -> strict RED/GREEN/REFACTOR implementation
   -> agent preflight self-review
-  -> draft PR
+  -> draft PR targeting the version branch
   -> CI and automatic independent review
   -> agent fixes review findings and reruns checks
+  -> explicit agent run closeout
   -> human accepts or rejects result
-  -> merge/deploy/use decision
+  -> version branch merges to main only after version acceptance
 ```
 
 ## Human Gates
@@ -40,6 +42,25 @@ Human approval is required for:
 - merge, deploy, production use, irreversible actions, risk increases, or promotion decisions.
 
 Issues generated directly from an approved PRD/version plan inherit that approval. They do not require another human approval unless they change scope, expose ambiguity, or conflict with the approved plan.
+
+## Version Branches
+
+For version-scoped work, `main` is the stable human-accepted line and `version/vNext` is the integration line for the active version.
+
+The version branch can contain code, docs, plans, and completed Issue work, but it is not a direct editing surface for agents. Agents create isolated worktrees and task branches from the version branch, then open PRs back to the version branch.
+
+Default version flow:
+
+```text
+main
+  -> version/vNext
+      -> codex/vNext-plan
+      -> codex/vNext-issue-001-topic
+      -> codex/vNext-issue-002-topic
+  -> final PR: version/vNext -> main
+```
+
+See `docs/VERSION_BRANCH_WORKFLOW.md` for the full rule.
 
 ## Ready Issue Rule
 
@@ -66,10 +87,48 @@ If any of these cannot be made clear, the agent must stop and ask the human to c
 The default execution model is serial:
 
 ```text
-one ready Issue -> one branch -> one draft PR -> review -> human acceptance
+one ready Issue -> one worktree -> one task branch -> one draft PR -> review -> human acceptance
 ```
 
 Parallel coding is not the default. Use it only when the human explicitly asks for it and the work units are genuinely independent.
+
+## Large PRD Execution
+
+When the active objective is a whole PRD, version plan, milestone, or large requirement, a local implementation pass is only a checkpoint. It is not terminal completion unless the whole assigned objective is implemented, verified, independently reviewed when required, and ready for the required human gate.
+
+Use checkpoint states inside a large objective:
+
+- `checkpoint_completed_continue`: one slice is implemented, verified, self-reviewed, and reviewed when independent review is required; choose the next unfinished ready item.
+- `checkpoint_review_waiting_continue`: one slice is implemented, verified, and ready for PR-level review or isolated reviewer subagent/session review while more objective work remains.
+- `status_answered_continue`: the human asked for status; answer briefly and continue unless they explicitly said to pause, stop, only answer, or not continue.
+
+During a large objective, the agent may stop only for full objective completion, a required human gate, a real blocker, unresolved test failure, explicit human pause/stop, or runtime interruption. Questions like "is it done?" or "what remains?" are status requests, not stop commands.
+
+See `docs/PRD_EXECUTION_LOOP.md` for the full rule.
+
+## Agent Run Lifecycle
+
+A material agent run starts when the agent edits files, creates or switches branches, opens or updates a PR, runs implementation tests, or performs runtime, deployment, cloud, or data operations for a task.
+
+Every material run must end in one explicit state:
+
+- `completed`;
+- `checkpoint_completed_continue`;
+- `checkpoint_review_waiting_continue`;
+- `status_answered_continue`;
+- `review_waiting`;
+- `blocked_needs_human`;
+- `blocked_tooling`;
+- `test_failed`;
+- `interrupted_incomplete`.
+
+For material code work, `completed` and `checkpoint_completed_continue` require independent review to be complete, or require an explicitly recorded independent-review limitation. If review is pending, use `review_waiting` or `checkpoint_review_waiting_continue`.
+
+Before ending, the agent must record the current branch, target base branch, linked Issue or plan, changed files, latest verification commands and outcomes, current micro-plan step, next action, review status, and residual risk.
+
+A dirty worktree, partial PR, unpushed branch, unfinished test run, or prior session with no closeout must be treated as `interrupted_incomplete`. The next agent must recover by reading status, diffs, evidence, and the linked Issue or plan before continuing. It must not restart, overwrite, or revert unfinished work unless the human explicitly asks.
+
+See `docs/AGENT_RUN_LIFECYCLE.md` for the full lifecycle rule.
 
 ## Test-First Rule
 
@@ -85,9 +144,12 @@ If a true red phase is impossible, the Issue or PR must state why and provide th
 
 ## Review Rule
 
-Agent self-review is preflight only. It catches low-level gaps before PR publication.
+Agent self-review is preflight only. It catches low-level gaps before PR publication and cannot satisfy the independent review gate.
 
-Independent review should start automatically after PR creation. The implementing agent fixes accepted findings and reruns checks.
+Independent review should start automatically after PR creation. The implementing agent must verify that PR-level review actually started; a plain mention event is not sufficient evidence. For GitHub Codex review, use `python3 scripts/check_github_review_gate.py --repo owner/name --pr <number> --wait-seconds 600`.
+
+If PR-level review is unavailable, blocked, not configured, mention-only after the checker timeout, or not yet possible because no PR exists for a material checkpoint, the implementing agent opens an isolated reviewer subagent/session when the runtime supports it.
+
+If neither PR-level review nor an isolated reviewer subagent/session is available, the agent records that limitation as a review-gate blocker or fallback before using a local second-pass review. The implementing agent fixes accepted findings and reruns checks.
 
 Human acceptance remains separate from review approval.
-

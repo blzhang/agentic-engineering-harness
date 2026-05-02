@@ -6,12 +6,14 @@
 human requirement
   -> PRD or version plan
   -> human plan approval
+  -> version integration branch
   -> structured Issues
   -> one ready Issue
-  -> branch
+  -> isolated worktree and task branch
   -> RED/GREEN/REFACTOR implementation
-  -> draft PR
-  -> CI and automatic review
+  -> draft PR into version branch
+  -> CI and automatic review or isolated reviewer fallback
+  -> explicit agent run closeout
   -> human acceptance
 ```
 
@@ -23,11 +25,42 @@ If any part is unclear, ask the human before marking ready.
 
 ## Execution
 
-Default to serial execution: one Issue, one branch, one PR.
+For version-scoped work, keep `main` stable and use `version/vNext` as the integration branch.
+
+Default to serial execution: one Issue, one worktree, one task branch, one PR.
+
+Agents do not implement directly on `main` or `version/vNext`. Create `codex/vNext-issue-<number>-<topic>` from the version branch and open the PR back to the version branch. The version branch merges to `main` only after version-level human acceptance.
+
+For whole-PRD or whole-version objectives, each local pass is a checkpoint. Continue to the next unfinished ready item until the objective is complete, a human gate is reached, a real blocker appears, or the human explicitly pauses. Status questions do not stop execution by themselves.
+
+## Agent Run Lifecycle
+
+Every material agent run must end in one explicit state:
+
+- `completed`;
+- `checkpoint_completed_continue`;
+- `checkpoint_review_waiting_continue`;
+- `status_answered_continue`;
+- `review_waiting`;
+- `blocked_needs_human`;
+- `blocked_tooling`;
+- `test_failed`;
+- `interrupted_incomplete`.
+
+Before ending, record the branch, target base branch, linked Issue or plan, changed files, latest verification commands and outcomes, current micro-plan step, next action, review status, and residual risk.
+
+For material code work, `completed` and `checkpoint_completed_continue` require independent review to be complete, or require an explicitly recorded independent-review limitation. If review is pending, use `review_waiting` or `checkpoint_review_waiting_continue`.
+
+A dirty worktree, partial PR, unpushed branch, unfinished tests, or prior agent session without closeout is `interrupted_incomplete`. Recover it before starting competing work.
 
 ## Review
 
 Self-review is preflight. Independent review should run automatically after PR creation.
 
-Human acceptance is required before merge, deploy, or use.
+After requesting PR-level review, verify that it actually started. For GitHub Codex review, use `python3 scripts/check_github_review_gate.py --repo owner/name --pr <number> --wait-seconds 600`. A plain `mentioned` event is not a review signal.
 
+If PR-level review is unavailable, blocked, not configured, mention-only after the checker timeout, or not yet possible because no PR exists for a material checkpoint, open an isolated reviewer subagent/session when the runtime supports it. Local self-review alone cannot satisfy the independent review gate.
+
+If no independent reviewer is available, record that limitation as a review-gate blocker or fallback before using a local second-pass review.
+
+Human acceptance is required before merge, deploy, or use.

@@ -1,0 +1,22 @@
+{
+  "comments": [],
+  "isDraft": false,
+  "number": 11,
+  "reviewDecision": "",
+  "reviews": [],
+  "state": "OPEN",
+  "statusCheckRollup": [
+    {
+      "name": "OpenAI Review",
+      "workflowName": "Codex",
+      "status": "COMPLETED",
+      "conclusion": "SUCCESS",
+      "completedAt": "2026-05-02T12:03:00Z",
+      "app": {
+        "slug": "openai",
+        "name": "OpenAI"
+      }
+    }
+  ],
+  "url": "https://github.com/example/repo/pull/11"
+}

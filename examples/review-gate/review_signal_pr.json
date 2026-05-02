@@ -1,0 +1,35 @@
+{
+  "comments": [
+    {
+      "author": {
+        "login": "owner"
+      },
+      "body": "@codex review for requirements compliance",
+      "createdAt": "2026-05-02T13:33:40Z",
+      "url": "https://github.com/example/repo/pull/5#issuecomment-1"
+    },
+    {
+      "author": {
+        "login": "codex"
+      },
+      "body": "Review started.",
+      "createdAt": "2026-05-02T13:33:45Z",
+      "url": "https://github.com/example/repo/pull/5#issuecomment-2"
+    }
+  ],
+  "isDraft": false,
+  "number": 5,
+  "reviewDecision": "REVIEW_REQUIRED",
+  "reviews": [
+    {
+      "author": {
+        "login": "codex"
+      },
+      "submittedAt": "2026-05-02T13:34:10Z",
+      "state": "COMMENTED"
+    }
+  ],
+  "state": "OPEN",
+  "statusCheckRollup": [],
+  "url": "https://github.com/example/repo/pull/5"
+}

@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "author": {
+        "login": "codex"
+      },
+      "body": "Previous review result.",
+      "createdAt": "2026-05-02T11:00:00Z",
+      "url": "https://github.com/example/repo/pull/14#issuecomment-1"
+    },
+    {
+      "author": {
+        "login": "owner"
+      },
+      "body": "@codex review for requirements compliance",
+      "createdAt": "2026-05-02T12:00:00Z",
+      "url": "https://github.com/example/repo/pull/14#issuecomment-2"
+    }
+  ],
+  "isDraft": false,
+  "number": 14,
+  "reviewDecision": "",
+  "reviews": [],
+  "state": "OPEN",
+  "statusCheckRollup": [],
+  "url": "https://github.com/example/repo/pull/14"
+}
