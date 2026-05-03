@@ -6,7 +6,7 @@ After PR creation, trigger automatic independent review. Then verify that review
 
 If PR-level review is unavailable, blocked, not configured, mention-only after the checker timeout, or not yet possible because no PR exists for a material checkpoint, open an isolated reviewer subagent/session when the runtime supports it.
 
-Checker status meanings: `review_signal_present` means PR-level review is real; `mentioned_only` means fallback immediately; `no_review_request` means trigger review or fallback; `tooling_error` means tooling is blocked unless local evidence allows fallback.
+Checker status meanings: `review_signal_present` means PR-level review is real; `mentioned_only` means fallback immediately; `integration_not_configured` means Codex has no private-repository access or Code review is not enabled; `no_review_request` means trigger review or fallback; `tooling_error` means tooling is blocked unless local evidence allows fallback.
 
 If no independent reviewer is available, record that limitation as a review-gate blocker or fallback before using a local second-pass review.
 

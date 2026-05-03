@@ -66,7 +66,7 @@ Self-review is preflight. Independent review should run automatically after PR c
 
 After requesting PR-level review, verify that it actually started. For GitHub Codex review, use `python3 scripts/check_github_review_gate.py --repo owner/name --pr <number> --wait-seconds 600`. A plain `mentioned` event is not a review signal.
 
-If PR-level review is unavailable, blocked, not configured, mention-only after the checker timeout, or not yet possible because no PR exists for a material checkpoint, open an isolated reviewer subagent/session when the runtime supports it. Local self-review alone cannot satisfy the independent review gate.
+If PR-level review is unavailable, blocked, not configured, mention-only after the checker timeout, `integration_not_configured`, or not yet possible because no PR exists for a material checkpoint, open an isolated reviewer subagent/session when the runtime supports it. Local self-review alone cannot satisfy the independent review gate.
 
 If no independent reviewer is available, record that limitation as a review-gate blocker or fallback before using a local second-pass review.
 

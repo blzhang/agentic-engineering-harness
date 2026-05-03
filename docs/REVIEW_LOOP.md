@@ -19,12 +19,13 @@ After PR creation, trigger independent review automatically. Prefer GitHub Code 
 
 Triggering a review request is not enough. The implementing agent must verify that the request produced a real review signal by using the project checker, such as `python3 scripts/check_github_review_gate.py --repo owner/name --pr <number> --wait-seconds 600`. A plain `mentioned` event is not a review signal.
 
-If PR-level review is unavailable, blocked, not configured, mention-only after the checker timeout, or not yet possible because no PR exists for a material checkpoint, open an isolated reviewer subagent/session when the runtime supports it. The reviewer returns findings only; the implementing agent owns fixes, rerun checks, and final judgment.
+If PR-level review is unavailable, blocked, not configured, mention-only after the checker timeout, `integration_not_configured`, or not yet possible because no PR exists for a material checkpoint, open an isolated reviewer subagent/session when the runtime supports it. The reviewer returns findings only; the implementing agent owns fixes, rerun checks, and final judgment.
 
 The GitHub review checker emits:
 
 - `review_signal_present`: PR-level review produced a Codex review or Codex bot comment after the latest review request.
 - `mentioned_only`: a review request was mentioned, but no review signal exists. Treat this as PR-level review unavailable and use reviewer fallback.
+- `integration_not_configured`: the PR is in a private repository and GitHub reports `codex` has no repository access. Treat this as PR-level review unavailable until Codex cloud is set up for the repository and Code review is enabled in Codex settings.
 - `no_review_request`: no review request was found. Trigger review or use fallback if PR-level review is not possible.
 - `tooling_error`: GitHub tooling or API access failed. Treat as tooling blocked unless fallback can proceed from local evidence.
 

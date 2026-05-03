@@ -163,7 +163,7 @@ Agent self-review is preflight only. It catches low-level gaps before PR publica
 
 Independent review should start automatically after PR creation. The implementing agent must verify that PR-level review actually started; a plain mention event is not sufficient evidence. For GitHub Codex review, use `python3 scripts/check_github_review_gate.py --repo owner/name --pr <number> --wait-seconds 600`.
 
-If PR-level review is unavailable, blocked, not configured, mention-only after the checker timeout, or not yet possible because no PR exists for a material checkpoint, the implementing agent opens an isolated reviewer subagent/session when the runtime supports it.
+If PR-level review is unavailable, blocked, not configured, mention-only after the checker timeout, `integration_not_configured`, or not yet possible because no PR exists for a material checkpoint, the implementing agent opens an isolated reviewer subagent/session when the runtime supports it.
 
 If neither PR-level review nor an isolated reviewer subagent/session is available, the agent records that limitation as a review-gate blocker or fallback before using a local second-pass review. The implementing agent fixes accepted findings and reruns checks.
 

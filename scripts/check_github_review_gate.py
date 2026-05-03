@@ -10,9 +10,9 @@ from pathlib import Path
 from typing import Any
 
 
-REVIEW_REQUEST_MARKERS = ("@codex review", "codex review")
 REVIEWER_LOGINS = {"codex"}
 REVIEW_SIGNAL_MARKERS = ("codex", "openai")
+CODEX_REVIEWER_LOGIN = "codex"
 
 
 def load_json(path: Path) -> Any:
@@ -34,7 +34,36 @@ def run_gh_json(args: list[str]) -> Any:
     return json.loads(completed.stdout or "null")
 
 
-def fetch_live(repo: str, pr: str) -> tuple[dict[str, Any], list[Any]]:
+def run_gh_json_allow_error(args: list[str]) -> tuple[Any | None, str | None]:
+    completed = subprocess.run(args, check=False, text=True, capture_output=True)
+    if completed.returncode != 0:
+        error = completed.stderr.strip() or completed.stdout.strip() or f"command failed: {' '.join(args)}"
+        return None, error
+    return json.loads(completed.stdout or "null"), None
+
+
+def fetch_codex_access(repo: str) -> dict[str, Any]:
+    repo_json, repo_error = run_gh_json_allow_error(["gh", "api", f"repos/{repo}"])
+    permission_json, permission_error = run_gh_json_allow_error(
+        ["gh", "api", f"repos/{repo}/collaborators/{CODEX_REVIEWER_LOGIN}/permission"]
+    )
+
+    diagnostic: dict[str, Any] = {
+        "repo_private": None,
+        "codex_permission": None,
+        "codex_role_name": None,
+        "permission_check_error": permission_error,
+        "repo_check_error": repo_error,
+    }
+    if isinstance(repo_json, dict):
+        diagnostic["repo_private"] = bool(repo_json.get("private"))
+    if isinstance(permission_json, dict):
+        diagnostic["codex_permission"] = permission_json.get("permission")
+        diagnostic["codex_role_name"] = permission_json.get("role_name")
+    return diagnostic
+
+
+def fetch_live(repo: str, pr: str) -> tuple[dict[str, Any], list[Any], dict[str, Any]]:
     pr_json = run_gh_json(
         [
             "gh",
@@ -58,14 +87,13 @@ def fetch_live(repo: str, pr: str) -> tuple[dict[str, Any], list[Any]]:
             "[.[] | {event:.event, actor:(.actor.login // .user.login), created_at:.created_at, state:.state, body:.body}]",
         ]
     )
-    return pr_json, timeline
+    return pr_json, timeline, fetch_codex_access(repo)
 
 
-def text_contains_review_request(text: str | None) -> bool:
+def text_is_review_request(text: str | None) -> bool:
     if not text:
         return False
-    lowered = text.lower()
-    return any(marker in lowered for marker in REVIEW_REQUEST_MARKERS)
+    return text.strip().lower().startswith("@codex review")
 
 
 def comment_author(comment: dict[str, Any]) -> str:
@@ -122,7 +150,18 @@ def check_time(check: dict[str, Any]) -> str | None:
     return None
 
 
-def classify(pr_json: dict[str, Any], timeline: list[Any]) -> tuple[str, dict[str, Any]]:
+def codex_access_missing(codex_access: dict[str, Any] | None) -> bool:
+    if not codex_access:
+        return False
+    permission = str(codex_access.get("codex_permission") or "").lower()
+    return codex_access.get("repo_private") is True and permission in {"", "none"}
+
+
+def classify(
+    pr_json: dict[str, Any],
+    timeline: list[Any],
+    codex_access: dict[str, Any] | None = None,
+) -> tuple[str, dict[str, Any]]:
     comments = pr_json.get("comments") or []
     reviews = pr_json.get("reviews") or []
     checks = pr_json.get("statusCheckRollup") or []
@@ -136,7 +175,7 @@ def classify(pr_json: dict[str, Any], timeline: list[Any]) -> tuple[str, dict[st
             "body": comment.get("body"),
         }
         for comment in comments
-        if isinstance(comment, dict) and text_contains_review_request(comment.get("body"))
+        if isinstance(comment, dict) and text_is_review_request(comment.get("body"))
     ]
     request_times = [parse_time(item.get("createdAt")) for item in request_comments]
     latest_request_time = max((item for item in request_times if item is not None), default=None)
@@ -202,6 +241,7 @@ def classify(pr_json: dict[str, Any], timeline: list[Any]) -> tuple[str, dict[st
         "codex_comments": codex_comments,
         "codex_checks": codex_checks,
         "review_timeline_events": review_timeline_events,
+        "codex_access": codex_access,
     }
 
     has_request = bool(request_comments)
@@ -209,6 +249,8 @@ def classify(pr_json: dict[str, Any], timeline: list[Any]) -> tuple[str, dict[st
     if has_review_signal:
         return "review_signal_present", evidence
     if has_request:
+        if codex_access_missing(codex_access):
+            return "integration_not_configured", evidence
         return "mentioned_only", evidence
     return "no_review_request", evidence
 
@@ -239,15 +281,16 @@ def main() -> int:
     while True:
         try:
             if args.repo:
-                pr_json, timeline = fetch_live(args.repo, args.pr)
+                pr_json, timeline, codex_access = fetch_live(args.repo, args.pr)
             else:
                 pr_json = load_json(Path(args.pr_json))
                 timeline = load_jsonl(Path(args.timeline_jsonl))
+                codex_access = None
         except Exception as exc:
             print(json.dumps({"status": "tooling_error", "error": str(exc)}, ensure_ascii=False, indent=2))
             return 4
 
-        last_status, last_evidence = classify(pr_json, timeline)
+        last_status, last_evidence = classify(pr_json, timeline, codex_access)
         if last_status == "review_signal_present" or time.time() >= deadline or not args.repo:
             break
         time.sleep(max(args.poll_interval, 1))
@@ -261,6 +304,8 @@ def main() -> int:
         return 2
     if last_status == "no_review_request":
         return 3
+    if last_status == "integration_not_configured":
+        return 6
     return 4
 
 
