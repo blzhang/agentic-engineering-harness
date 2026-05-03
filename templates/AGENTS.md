@@ -18,6 +18,8 @@ Every material agent run must end as `completed`, `checkpoint_completed_continue
 
 For whole-PRD or whole-version objectives, a local implementation pass is only a checkpoint. Continue to the next unfinished ready item unless the human explicitly says to pause, stop, only answer, or not continue. Status questions should be answered briefly and then execution should continue.
 
+When drafting or updating a PRD/version plan, record both the final design and the discussion-to-decision logic: original requirement, discussion path, assumptions, rejected alternatives, selected rationale, and the mapping from rationale to acceptance, verification, and Issues. If that logic is unclear, ask the human to clarify before treating the PRD as ready.
+
 For version-scoped work, keep `main` stable and use `version/vNext` as the integration branch. Agents must not implement directly on `main` or the version branch; create a task branch from the version branch and open a PR back to it.
 
 Project-specific product policy and safety guardrails override generic harness defaults.

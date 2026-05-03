@@ -5,6 +5,7 @@
 ```text
 human requirement
   -> PRD or version plan
+  -> PRD records discussion-to-decision logic
   -> human plan approval
   -> version integration branch
   -> structured Issues
@@ -22,6 +23,12 @@ human requirement
 Issues must be structured, deterministic, and regression-testable. They must include input, output, rules, constraints, acceptance, verification, guardrails, and micro-plan.
 
 If any part is unclear, ask the human before marking ready.
+
+## PRD Rationale
+
+PRDs and version plans must preserve how the team reached the final design. Include the original requirement, discussion path, assumptions, rejected alternatives, selected rationale, and how that rationale maps to acceptance, verification, guardrails, and generated Issues.
+
+If this logic is missing, the PRD is not ready for Issue generation.
 
 ## Execution
 

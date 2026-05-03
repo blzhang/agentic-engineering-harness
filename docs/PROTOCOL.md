@@ -43,6 +43,21 @@ Human approval is required for:
 
 Issues generated directly from an approved PRD/version plan inherit that approval. They do not require another human approval unless they change scope, expose ambiguity, or conflict with the approved plan.
 
+## PRD Authoring
+
+A PRD or version plan must be reviewable as a reasoning artifact, not only as a task list.
+
+When drafting or updating a PRD/version plan, include:
+
+- the original human requirement and product intent;
+- the discussion path that shaped the requirement;
+- key assumptions, constraints, and non-goals;
+- alternatives considered and why they were rejected or deferred;
+- the selected design and why it satisfies the requirement better than the alternatives;
+- how the design rationale maps to acceptance criteria, guardrails, verification, and generated Issues.
+
+If the discussion-to-decision logic is missing or ambiguous, ask the human to clarify before treating the PRD/version plan as approved or ready for Issue generation.
+
 ## Version Branches
 
 For version-scoped work, `main` is the stable human-accepted line and `version/vNext` is the integration line for the active version.

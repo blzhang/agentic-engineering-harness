@@ -23,6 +23,7 @@ The harness is designed for projects where AI coding agents are useful but shoul
 ## What It Provides
 
 - A protocol for PRD-first, human-approved planning.
+- A PRD writing rule that preserves the discussion-to-decision logic behind the final design.
 - A version-branch integration model for projects where `main` stays stable.
 - A large-PRD execution loop that treats local passes as checkpoints, not final completion.
 - GitHub Issue contracts that are structured, deterministic, and regression-testable.
@@ -35,21 +36,22 @@ The harness is designed for projects where AI coding agents are useful but shoul
 ## Core Rules
 
 1. Human approval of a PRD or version plan is the planning gate.
-2. Issues generated from an approved plan do not need a second human approval unless scope changes or ambiguity appears.
-3. Standalone Issues require human confirmation before they can be marked ready.
-4. Every ready Issue must have deterministic input, output, rules, constraints, acceptance criteria, verification, and a micro-plan.
-5. If the agent cannot make the Issue deterministic, it must ask the human to clarify.
-6. Version-scoped work uses `version/vNext` as an integration branch while `main` remains stable.
-7. Agents do not implement directly on `main` or `version/vNext`; they use isolated worktrees and task branches.
-8. Default execution is serial: one ready Issue, one worktree, one task branch, one draft PR.
-9. Material behavior changes use strict RED/GREEN/REFACTOR.
-10. For whole-PRD or whole-version objectives, a local pass is a checkpoint; continue to the next unfinished item unless a real stop condition exists.
-11. Status questions are answered briefly and then execution continues unless the human explicitly pauses or asks for answer-only.
-12. Every material agent run ends with an explicit state such as `completed`, `checkpoint_completed_continue`, `checkpoint_review_waiting_continue`, `status_answered_continue`, `review_waiting`, `blocked_needs_human`, `blocked_tooling`, `test_failed`, or `interrupted_incomplete`; material code uses `completed` only after required independent review completes or an independent-review limitation is explicitly recorded.
-13. A dirty worktree or partial PR without closeout is incomplete and must be recovered before new implementation starts.
-14. Agent self-review is only preflight, never the independent review gate.
-15. Review should run automatically after PR creation and must be verified with a real review signal; if PR review is unavailable, mention-only, or no PR exists yet for a material checkpoint, use an isolated reviewer subagent/session when the runtime supports it.
-16. Human acceptance is required before merge, deploy, production use, irreversible actions, or risk increases.
+2. A PRD/version plan must record both the final design and the discussion-to-decision logic: original requirement, discussion path, assumptions, rejected alternatives, selected design rationale, and how that rationale maps to acceptance, verification, and Issues.
+3. Issues generated from an approved plan do not need a second human approval unless scope changes or ambiguity appears.
+4. Standalone Issues require human confirmation before they can be marked ready.
+5. Every ready Issue must have deterministic input, output, rules, constraints, acceptance criteria, verification, and a micro-plan.
+6. If the agent cannot make the PRD rationale or Issue deterministic, it must ask the human to clarify.
+7. Version-scoped work uses `version/vNext` as an integration branch while `main` remains stable.
+8. Agents do not implement directly on `main` or `version/vNext`; they use isolated worktrees and task branches.
+9. Default execution is serial: one ready Issue, one worktree, one task branch, one draft PR.
+10. Material behavior changes use strict RED/GREEN/REFACTOR.
+11. For whole-PRD or whole-version objectives, a local pass is a checkpoint; continue to the next unfinished item unless a real stop condition exists.
+12. Status questions are answered briefly and then execution continues unless the human explicitly pauses or asks for answer-only.
+13. Every material agent run ends with an explicit state such as `completed`, `checkpoint_completed_continue`, `checkpoint_review_waiting_continue`, `status_answered_continue`, `review_waiting`, `blocked_needs_human`, `blocked_tooling`, `test_failed`, or `interrupted_incomplete`; material code uses `completed` only after required independent review completes or an independent-review limitation is explicitly recorded.
+14. A dirty worktree or partial PR without closeout is incomplete and must be recovered before new implementation starts.
+15. Agent self-review is only preflight, never the independent review gate.
+16. Review should run automatically after PR creation and must be verified with a real review signal; if PR review is unavailable, mention-only, or no PR exists yet for a material checkpoint, use an isolated reviewer subagent/session when the runtime supports it.
+17. Human acceptance is required before merge, deploy, production use, irreversible actions, or risk increases.
 
 ## Repository Layout
 
