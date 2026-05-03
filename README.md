@@ -18,6 +18,41 @@ human requirement
   -> final version PR to main after human acceptance
 ```
 
+## Harness Flow
+
+```mermaid
+flowchart TD
+    A["Human requirement"] --> B["Codex drafts PRD or version plan"]
+    B --> C["Record discussion-to-decision logic"]
+    C --> D{"Human approves plan?"}
+    D -- "No" --> E["Clarify requirement, rationale, scope, or acceptance"]
+    E --> B
+    D -- "Yes" --> F["Create or select version/vNext"]
+    F --> G["Generate deterministic GitHub Issues"]
+    G --> H{"Issue ready?"}
+    H -- "No" --> E
+    H -- "Yes" --> I["Create isolated worktree and codex task branch"]
+    I --> J["RED: failing test or deterministic substitute"]
+    J --> K["GREEN: smallest coherent implementation"]
+    K --> L["REFACTOR while checks stay green"]
+    L --> M["Focused checks and preflight self-review"]
+    M --> N["Open or update draft PR to version branch"]
+    N --> O["Request PR-level review"]
+    O --> P{"Real review signal?"}
+    P -- "Yes" --> Q["Fix accepted P0/P1 findings and rerun checks"]
+    P -- "No: mention-only, integration_not_configured, or tooling blocked" --> R["Use isolated reviewer fallback when available"]
+    R --> Q
+    Q --> S{"Known blocking issue remains?"}
+    S -- "Yes" --> K
+    S -- "No" --> T["Checkpoint closeout with explicit run state"]
+    T --> U{"More ready work in version?"}
+    U -- "Yes" --> H
+    U -- "No" --> V["Human acceptance of version result"]
+    V --> W{"Accepted?"}
+    W -- "No" --> E
+    W -- "Yes" --> X["Final version PR to main"]
+```
+
 The harness is designed for projects where AI coding agents are useful but should not be allowed to blur product intent, skip tests, self-approve work, or merge/deploy without human acceptance.
 
 ## What It Provides
