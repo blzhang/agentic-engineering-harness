@@ -6,6 +6,7 @@
 human requirement
   -> PRD or version plan
   -> PRD records discussion-to-decision logic
+  -> independent PRD review and revision
   -> human plan approval
   -> version integration branch
   -> structured Issues
@@ -29,6 +30,12 @@ If any part is unclear, ask the human before marking ready.
 PRDs and version plans must preserve how the team reached the final design. Include the original requirement, discussion path, assumptions, rejected alternatives, selected rationale, and how that rationale maps to acceptance, verification, guardrails, and generated Issues.
 
 If this logic is missing, the PRD is not ready for Issue generation.
+
+## PRD Review Gate
+
+Before a PRD/version plan is ready for human approval, run a PRD-focused independent review pass when the runtime supports a separate reviewer subagent/session. The drafting agent gives the reviewer the PRD draft, discussion context, acceptance expectations, and guardrails. The reviewer returns findings only. The drafting agent revises the PRD from accepted findings, self-reviews the revised PRD, and only then asks the human for approval.
+
+If an independent PRD reviewer is unavailable, record the limitation and perform an explicit local second-pass PRD review before requesting human approval.
 
 ## Execution
 

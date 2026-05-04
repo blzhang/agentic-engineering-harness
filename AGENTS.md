@@ -10,5 +10,6 @@ When changing this repository:
 4. Do not present agent self-review as a substitute for independent review; use an isolated reviewer subagent/session when PR-level review is unavailable and the runtime supports it.
 5. Do not weaken the version branch, isolated worktree, or task branch model.
 6. Do not weaken the agent run lifecycle gate or allow silent stops after material edits.
-7. Keep templates generic and project-portable.
-8. Verify scripts before claiming they work.
+7. Do not allow PRD/version-plan drafts to skip the independent PRD review gate before human approval when reviewer subagents/sessions are available.
+8. Keep templates generic and project-portable.
+9. Verify scripts before claiming they work.

@@ -17,6 +17,7 @@ The protocol separates four concerns:
 natural-language requirement
   -> human requirement confirmation
   -> agent drafts PRD or version plan
+  -> independent PRD review and agent revision
   -> human approves plan
   -> version integration branch is created or selected
   -> agent generates structured Issues from approved plan
@@ -41,7 +42,7 @@ Human approval is required for:
 - final result acceptance;
 - merge, deploy, production use, irreversible actions, risk increases, or promotion decisions.
 
-Issues generated directly from an approved PRD/version plan inherit that approval. They do not require another human approval unless they change scope, expose ambiguity, or conflict with the approved plan.
+Issues generated directly from a reviewed and human-approved PRD/version plan inherit that approval. They do not require another human approval unless they change scope, expose ambiguity, or conflict with the approved plan.
 
 ## PRD Authoring
 
@@ -57,6 +58,21 @@ When drafting or updating a PRD/version plan, include:
 - how the design rationale maps to acceptance criteria, guardrails, verification, and generated Issues.
 
 If the discussion-to-decision logic is missing or ambiguous, ask the human to clarify before treating the PRD/version plan as approved or ready for Issue generation.
+
+## PRD Review Gate
+
+A PRD/version plan draft is not ready for human approval until it has passed a PRD-focused review loop.
+
+Required flow:
+
+1. The drafting agent writes or updates the PRD/version plan, including requirements, discussion-to-decision logic, selected design, rejected alternatives, acceptance criteria, verification approach, guardrails, and Issue mapping.
+2. The drafting agent opens an isolated PRD reviewer subagent/session when the runtime supports it.
+3. The PRD reviewer audits the draft for unclear requirements, missing rationale, unverifiable acceptance criteria, weak regression criteria, unsafe boundaries, inconsistent scope, untracked assumptions, and Issue decomposition gaps.
+4. The reviewer returns findings only. It should not directly edit the PRD unless the main agent explicitly delegates a separate repair task.
+5. The drafting agent applies accepted findings by revising the PRD, then performs a local self-review of the revised PRD.
+6. Only after the revised PRD has no known material PRD-quality findings may the agent ask the human to approve the PRD/version plan.
+
+If an independent PRD reviewer subagent/session is unavailable, record that limitation and perform an explicit local second-pass PRD review before requesting human approval.
 
 ## Version Branches
 

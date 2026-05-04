@@ -30,9 +30,10 @@ The version branch is an integration branch, not a construction site. Agents do 
 
 1. Create `version/vNext` from the current accepted `main`.
 2. Create or update the PRD/version plan in a planning branch or isolated worktree.
-3. Get human approval for the PRD/version plan.
-4. Generate structured Issues from the approved plan.
-5. Mark generated Issues ready only when they preserve the approved scope and deterministic acceptance criteria.
+3. Run the PRD review gate from `docs/PRD_EXECUTION_LOOP.md`: use an isolated PRD reviewer subagent/session when available, revise the PRD from accepted findings, and self-review the revised plan.
+4. Get human approval for the reviewed PRD/version plan.
+5. Generate structured Issues from the approved plan.
+6. Mark generated Issues ready only when they preserve the approved scope and deterministic acceptance criteria.
 
 ## Task Execution
 

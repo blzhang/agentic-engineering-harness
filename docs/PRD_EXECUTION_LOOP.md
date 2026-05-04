@@ -62,3 +62,27 @@ Large objectives should keep a concise external trail:
 - blockers and residual risk.
 
 Use a PR description, Issue comment, or run ledger when available. This lets a future session recover without rereading the whole conversation.
+
+## PRD Logic Preservation
+
+Before implementing or generating Issues from a PRD/version plan, verify that the plan records both:
+
+- the final requirements and design;
+- the discussion-to-decision logic explaining why those requirements and design choices were selected.
+
+If a PRD only states what to build but omits why the team chose that design, what alternatives were rejected, or how the rationale maps to acceptance and verification, treat the PRD as not yet review-ready and ask the human to clarify.
+
+## PRD Review Gate
+
+A PRD/version plan draft is not ready for human approval until it has passed a PRD-focused review loop.
+
+Required flow:
+
+1. The main agent drafts or updates the PRD/version plan, including requirements, discussion-to-decision logic, accepted design, rejected alternatives, acceptance criteria, verification approach, and Issue mapping.
+2. The main agent opens an isolated PRD reviewer subagent/session when the runtime supports it.
+3. The PRD reviewer audits the draft for unclear requirements, missing rationale, unverifiable acceptance criteria, weak regression criteria, unsafe boundaries, inconsistent scope, untracked assumptions, and Issue decomposition gaps.
+4. The reviewer returns findings only. It should not directly edit the PRD unless the main agent explicitly delegates a separate repair task.
+5. The main agent applies accepted findings by revising the PRD, then performs a local self-review of the revised PRD.
+6. Only after the revised PRD has no known material PRD-quality findings may the agent ask the human to approve the PRD/version plan.
+
+If an independent PRD reviewer subagent/session is unavailable or forbidden by higher-priority runtime policy, the agent must disclose that limitation in the PRD evidence and perform an explicit local second-pass PRD review before requesting human approval.

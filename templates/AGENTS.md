@@ -20,6 +20,8 @@ For whole-PRD or whole-version objectives, a local implementation pass is only a
 
 When drafting or updating a PRD/version plan, record both the final design and the discussion-to-decision logic: original requirement, discussion path, assumptions, rejected alternatives, selected rationale, and the mapping from rationale to acceptance, verification, and Issues. If that logic is unclear, ask the human to clarify before treating the PRD as ready.
 
+Before a PRD/version plan can be marked ready for human approval, run an independent PRD review pass when the runtime supports a separate reviewer subagent/session. The main session drafts or updates the PRD, opens a short-lived isolated PRD reviewer with the draft, discussion context, acceptance expectations, and relevant guardrails, then uses the review findings to revise the PRD itself. The reviewer returns findings only and does not edit the PRD directly unless the main session explicitly delegates a separate repair task. The main session self-reviews the revised PRD after applying accepted findings. If no independent reviewer is available, record that limitation and perform an explicit local second-pass PRD review before asking the human to approve the plan.
+
 For version-scoped work, keep `main` stable and use `version/vNext` as the integration branch. Agents must not implement directly on `main` or the version branch; create a task branch from the version branch and open a PR back to it.
 
 Project-specific product policy and safety guardrails override generic harness defaults.

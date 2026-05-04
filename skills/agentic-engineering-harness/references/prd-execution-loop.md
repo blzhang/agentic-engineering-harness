@@ -11,3 +11,6 @@ Rules:
 - Continue to the next unfinished ready item unless the human explicitly says pause, stop, only answer, or do not continue.
 - Stop only for objective completion, human gate, real blocker, unresolved verification failure, explicit pause/stop, or runtime interruption.
 - Keep a concise external trail of completed slices, latest verification, next item, and blockers.
+- PRD/version plan drafts are not ready for human approval until an independent PRD reviewer subagent/session audits the draft when available.
+- The PRD reviewer returns findings only; the main agent revises the PRD from accepted findings and self-reviews the revised plan.
+- If no independent PRD reviewer is available, record the limitation and perform a local second-pass PRD review before requesting human approval.

@@ -13,6 +13,8 @@ Branch roles:
 Rules:
 
 - Create or select `version/vNext` before executing version-scoped Issues.
+- Draft or update the PRD/version plan in a planning branch or isolated worktree.
+- Run the PRD review gate before human plan approval: independent PRD reviewer when available, agent revision, and self-review.
 - Create task branches from `version/vNext`, ideally in isolated worktrees.
 - Open Issue PRs back to `version/vNext`.
 - Do not implement directly on `main` or `version/vNext`.
