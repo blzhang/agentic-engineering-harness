@@ -36,11 +36,10 @@ Closes #
 
 # Review Gate
 
-- [ ] GitHub Code Review was triggered and `scripts/check_github_review_gate.py` recorded a real review signal below, or
-- [ ] Project-configured PR-level AI review was triggered and current outcome/status is recorded below, or
-- [ ] Isolated reviewer subagent/session completed because PR-level review was unavailable/not yet possible.
-- [ ] Local-only second-pass review was used only because independent review was unavailable, and that limitation is documented.
-- [ ] No known blocking independent-review findings remain, or this PR/run is explicitly `review_waiting`.
+- [ ] Intermediate Issue PR: isolated reviewer budget status is recorded below, including pass count used for the current PRD/version batch.
+- [ ] Final version PR: PR-level review was triggered and the project checker recorded a real review signal below.
+- [ ] Local-only second-pass review was used only because the applicable reviewer was unavailable, and that limitation is documented.
+- [ ] No known blocking P0/P1 review findings remain, or this PR/run is explicitly `review_waiting` / `blocked_needs_human`.
 
 <!-- Summarize review findings, accepted fixes, rejected findings with evidence, and rerun checks. -->
 

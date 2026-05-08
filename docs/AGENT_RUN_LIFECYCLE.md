@@ -17,11 +17,11 @@ Direct answers and tiny read-only inspections do not need the full lifecycle gat
 
 Every material run must end in one explicit state:
 
-- `completed`: scoped work is implemented, verified, self-reviewed, and the required independent review is complete or an independent-review limitation has been explicitly recorded.
-- `checkpoint_completed_continue`: a slice of a larger objective is implemented, verified, self-reviewed, and reviewed when independent review is required; the agent should continue to the next unfinished item.
-- `checkpoint_review_waiting_continue`: a slice is implemented, verified, and ready for PR-level review or isolated reviewer subagent/session review while the larger objective still has remaining work.
+- `completed`: scoped work is implemented, verified, self-reviewed, and the applicable review policy is complete or a review limitation has been explicitly recorded.
+- `checkpoint_completed_continue`: a slice of a larger objective is implemented, verified, self-reviewed, and covered by the current batch review policy; the agent should continue to the next unfinished item.
+- `checkpoint_review_waiting_continue`: a slice is implemented, verified, and ready for the next isolated reviewer subagent/session pass while the larger objective still has remaining work and review budget.
 - `status_answered_continue`: the human asked for status and the agent should continue the active objective.
-- `review_waiting`: branch or PR is ready for PR-level review or isolated reviewer subagent/session review, with current evidence attached.
+- `review_waiting`: branch or PR is ready for the applicable review gate, such as the next isolated reviewer pass for intermediate work or PR-level review for the final version PR, with current evidence attached.
 - `blocked_needs_human`: product intent, acceptance criteria, scope, safety, or risk decisions need human clarification.
 - `blocked_tooling`: tools, credentials, network, service state, repository state, or CI access prevent completion.
 - `test_failed`: a required verification command fails and the failure is unresolved.
@@ -36,7 +36,7 @@ Before ending a material run, record:
 - changed files and ownership boundaries;
 - latest verification commands and outcomes;
 - current micro-plan step and next action;
-- self-review status and PR-level review or isolated reviewer subagent/session status;
+- self-review status, isolated reviewer budget status, and final PR-level review status when applicable;
 - residual risk, skipped checks, blockers, or reason for an incomplete state.
 
 ## Dirty Worktree Sentinel

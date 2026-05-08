@@ -14,9 +14,9 @@ human requirement
   -> one ready Issue, one worktree, one task branch
   -> strict RED/GREEN/REFACTOR
   -> draft PR into the version branch
-  -> automatic review
+  -> capped isolated reviewer budget for intermediate Issue work
   -> explicit agent run closeout
-  -> final version PR to main after human acceptance
+  -> final version PR to main with PR-level review after human acceptance
 ```
 
 ## Harness Flow
@@ -40,11 +40,11 @@ flowchart TD
     M --> N["REFACTOR while checks stay green"]
     N --> O["Focused checks and preflight self-review"]
     O --> P["Open or update draft PR to version branch"]
-    P --> Q["Request PR-level review"]
-    Q --> R{"Real review signal?"}
-    R -- "Yes" --> S["Fix accepted P0/P1 findings and rerun checks"]
-    R -- "No: mention-only, integration_not_configured, or tooling blocked" --> T["Use isolated reviewer fallback when available"]
-    T --> S
+    P --> Q["Use batch isolated reviewer budget"]
+    Q --> R{"Review budget remains?"}
+    R -- "Yes" --> S["Fix P0/P1 findings and rerun checks"]
+    R -- "No, unresolved P0/P1" --> T["Block for human or explicit risk decision"]
+    T --> G
     S --> U{"Known blocking issue remains?"}
     U -- "Yes" --> M
     U -- "No" --> V["Checkpoint closeout with explicit run state"]
@@ -53,7 +53,7 @@ flowchart TD
     W -- "No" --> X["Human acceptance of version result"]
     X --> Y{"Accepted?"}
     Y -- "No" --> G
-    Y -- "Yes" --> Z["Final version PR to main"]
+    Y -- "Yes" --> Z["Final version PR to main with verified PR-level review"]
 ```
 
 The harness is designed for projects where AI coding agents are useful but should not be allowed to blur product intent, skip tests, self-approve work, or merge/deploy without human acceptance.
@@ -87,11 +87,12 @@ The harness is designed for projects where AI coding agents are useful but shoul
 11. Material behavior changes use strict RED/GREEN/REFACTOR.
 12. For whole-PRD or whole-version objectives, a local pass is a checkpoint; continue to the next unfinished item unless a real stop condition exists.
 13. Status questions are answered briefly and then execution continues unless the human explicitly pauses or asks for answer-only.
-14. Every material agent run ends with an explicit state such as `completed`, `checkpoint_completed_continue`, `checkpoint_review_waiting_continue`, `status_answered_continue`, `review_waiting`, `blocked_needs_human`, `blocked_tooling`, `test_failed`, or `interrupted_incomplete`; material code uses `completed` only after required independent review completes or an independent-review limitation is explicitly recorded.
+14. Every material agent run ends with an explicit state such as `completed`, `checkpoint_completed_continue`, `checkpoint_review_waiting_continue`, `status_answered_continue`, `review_waiting`, `blocked_needs_human`, `blocked_tooling`, `test_failed`, or `interrupted_incomplete`; material code uses `completed` only after the applicable review policy completes or a review limitation is explicitly recorded.
 15. A dirty worktree or partial PR without closeout is incomplete and must be recovered before new implementation starts.
-16. Agent self-review is only preflight, never the independent review gate.
-17. Review should run automatically after PR creation and must be verified with a real review signal; if PR review is unavailable, mention-only, or no PR exists yet for a material checkpoint, use an isolated reviewer subagent/session when the runtime supports it.
-18. Human acceptance is required before merge, deploy, production use, irreversible actions, or risk increases.
+16. Agent self-review is only preflight, never the isolated reviewer budget or final PR-level review gate.
+17. Intermediate Issue work uses a PRD/version batch review budget: at most three isolated reviewer subagent/session passes total, fixing or evidentially rejecting P0/P1 findings after each pass.
+18. Final version PRs use PR-level review when available, and the final review/fix/re-review loop is not limited by the isolated reviewer budget.
+19. Human acceptance is required before merge, deploy, production use, irreversible actions, or risk increases.
 
 ## Repository Layout
 

@@ -6,8 +6,8 @@ This rule applies when a human assigns a whole PRD, version plan, milestone, or 
 
 Do not treat a coherent local implementation pass as completion of the whole objective.
 
-- Objective completion means the assigned PRD/version scope is implemented, verified, independently reviewed when required, and ready for the required human gate.
-- Checkpoint completion means one Issue, slice, or local pass has reached `checkpoint_completed_continue`; material code checkpoints require independent review to be complete or an independent-review limitation to be recorded.
+- Objective completion means the assigned PRD/version scope is implemented, verified, reviewed under the applicable final review gate, and ready for the required human gate.
+- Checkpoint completion means one Issue, slice, or local pass has reached `checkpoint_completed_continue`; material code checkpoints must satisfy the current PRD/version batch review budget or record a review limitation.
 
 `completed` is a terminal state only for the active objective. If the whole PRD/version is still incomplete, use a checkpoint state and continue.
 
@@ -15,8 +15,8 @@ Do not treat a coherent local implementation pass as completion of the whole obj
 
 Use these states inside a large objective:
 
-- `checkpoint_completed_continue`: a coherent slice is implemented, verified, self-reviewed, and reviewed when independent review is required; select the next unfinished ready item.
-- `checkpoint_review_waiting_continue`: a slice is implemented, verified, and ready for PR-level review or isolated reviewer subagent/session review while the remaining objective still has work; continue only when serial review policy allows it.
+- `checkpoint_completed_continue`: a coherent slice is implemented, verified, self-reviewed, and covered by the current PRD/version batch review policy; select the next unfinished ready item.
+- `checkpoint_review_waiting_continue`: a slice is implemented, verified, and ready for the next isolated reviewer subagent/session pass while the remaining objective still has work and the batch still has review budget.
 - `status_answered_continue`: the human asked for status; answer briefly and continue the active objective.
 
 ## Allowed Stops
@@ -34,7 +34,13 @@ Questions such as "is it done?", "what is the status?", or "what remains?" are n
 
 ## Checkpoint Review
 
-For material code checkpoints, self-review is preflight only. Use PR-level review when a PR exists and review is available. If PR-level review is unavailable or no PR exists yet for that checkpoint, open an isolated reviewer subagent/session when the runtime supports it.
+For material code checkpoints, self-review is preflight only. Intermediate Issue/task checkpoints do not trigger PR-level review by default. Instead, use the PRD/version batch's isolated reviewer budget when the runtime supports it.
+
+One PRD/version batch may use at most three isolated reviewer subagent/session passes total for implementation work: one initial review plus up to two re-review passes after fixes. PRD/version-plan review passes do not count against this implementation budget. P0/P1 findings must be fixed or explicitly rejected with evidence before continuing; P2/P3 findings may be fixed or recorded as residual risk/backlog.
+
+If the three-pass isolated reviewer budget is exhausted while unresolved P0/P1 findings remain, stop as `blocked_needs_human` or record an explicit risk decision. Do not continue the objective as clean.
+
+The final version PR must run PR-level review when available. Final review/fix/re-review cycles do not count against the isolated reviewer budget and continue until no blocking P0/P1 findings remain, or until a finding is explicitly rejected with evidence.
 
 If no independent reviewer is available, record that limitation as a review-gate blocker or fallback before using a local second-pass review. Do not mark a material checkpoint as fully reviewed with local self-review alone.
 

@@ -44,10 +44,12 @@ For each ready Issue:
 3. Verify the clean baseline or record known pre-existing failures.
 4. Follow RED/GREEN/REFACTOR or a deterministic substitute.
 5. Open a draft PR targeting `version/vNext`.
-6. Run CI and independent review: PR-level review when available, otherwise an isolated reviewer subagent/session when the runtime supports it.
-7. Merge into `version/vNext` only after checks, review, and required human acceptance for that task.
+6. Run CI, self-review, and the PRD/version batch's capped isolated reviewer policy when the runtime supports it. Intermediate Issue PRs do not trigger PR-level review by default.
+7. Merge into `version/vNext` only after checks, applicable review coverage, and required human acceptance for that task.
 
 Serial execution remains the default: one ready Issue, one task branch, one draft PR. Parallel work is allowed only when the human explicitly asks and the work units are independent.
+
+One PRD/version batch may use at most three isolated reviewer subagent/session passes total for implementation work: one initial review plus up to two re-review passes after fixes. P0/P1 findings must be fixed or explicitly rejected with evidence before continuing. If the review budget is exhausted while unresolved P0/P1 findings remain, stop as `blocked_needs_human` or record an explicit risk decision.
 
 ## Version Integration
 
@@ -67,11 +69,12 @@ When all version Issues are complete:
 2. Confirm review findings are fixed or explicitly rejected with evidence.
 3. Produce a version evidence summary.
 4. Open the final PR from `version/vNext` to `main`.
-5. Human accepts or rejects the complete version.
-6. Merge to `main` only after human acceptance.
-7. Tag or record the release when the project requires it.
+5. Trigger PR-level review on the final PR when available, verify a real review signal with the project checker, and continue final review/fix/re-review cycles until no blocking P0/P1 findings remain or rejected findings have evidence. This final review loop is not limited by the isolated reviewer budget.
+6. Human accepts or rejects the complete version.
+7. Merge to `main` only after human acceptance.
+8. Tag or record the release when the project requires it.
 
-The final version PR reviews the integrated version evidence and remaining risk. It should not replace the per-Issue implementation reviews.
+The final version PR reviews the integrated version evidence and remaining risk. It is the default PR-level review gate for the version batch; it does not remove the intermediate Issue requirement for focused checks, self-review, evidence, and capped isolated reviewer coverage.
 
 ## Hotfixes
 

@@ -1,4 +1,4 @@
 interface:
   display_name: "Agentic Engineering Harness"
   short_description: "Human-gated AI coding workflow."
-  default_prompt: "Use the Agentic Engineering Harness to turn this requirement into a PRD or ready Issue, then guide version-branch implementation with isolated task branches, test-first evidence, checkpoint continuation, explicit run closeout, verified GitHub Code Review when available, and isolated reviewer fallback when PR review is unavailable or mention-only."
+  default_prompt: "Use the Agentic Engineering Harness to turn this requirement into a PRD or ready Issue, then guide version-branch implementation with isolated task branches, test-first evidence, checkpoint continuation, explicit run closeout, capped isolated reviewer passes for intermediate Issue work, and verified PR-level review on the final version PR when available."

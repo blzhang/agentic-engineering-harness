@@ -1,6 +1,6 @@
 ---
 name: agentic-engineering-harness
-description: Use when turning human requirements into PRDs, deterministic GitHub Issues, version integration branches, isolated worktree/task-branch execution, strict test-first implementation, draft PRs, automatic review loops, and human-gated acceptance across software projects.
+description: Use when turning human requirements into PRDs, deterministic GitHub Issues, version integration branches, isolated worktree/task-branch execution, strict test-first implementation, draft PRs, capped intermediate review budgets, final PR-level review, and human-gated acceptance across software projects.
 ---
 
 # Agentic Engineering Harness
@@ -25,8 +25,9 @@ Use this skill when a user wants agentic coding governed by a reusable workflow.
 14. Answer status questions briefly, then continue the active objective unless the human explicitly pauses, stops, or asks for answer-only.
 15. End every material agent run with an explicit lifecycle state and closeout evidence.
 16. Treat self-review as preflight only.
-17. Trigger independent review automatically after PR creation, then verify that it actually produced a review signal. For GitHub Codex review, use `scripts/check_github_review_gate.py`. If PR-level review is unavailable, mention-only, or no PR exists yet for a material checkpoint, open an isolated reviewer subagent/session when the runtime supports it.
-18. Keep human acceptance as the final gate before merge, deploy, or use.
+17. For intermediate Issue work, use the PRD/version batch review budget instead of automatically triggering PR-level review on every task PR: at most three isolated reviewer subagent/session passes total, with P0/P1 findings fixed or rejected with evidence.
+18. Trigger PR-level review on the final version PR when available, then verify that it actually produced a review signal. For GitHub Codex review, use `scripts/check_github_review_gate.py`. Final review/fix/re-review cycles are not limited by the isolated reviewer budget.
+19. Keep human acceptance as the final gate before merge, deploy, or use.
 
 ## When To Stop
 

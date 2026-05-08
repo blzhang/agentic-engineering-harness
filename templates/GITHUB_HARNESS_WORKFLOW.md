@@ -14,8 +14,9 @@ human requirement
   -> isolated worktree and task branch
   -> RED/GREEN/REFACTOR implementation
   -> draft PR into version branch
-  -> CI and automatic review or isolated reviewer fallback
+  -> CI and capped isolated reviewer budget for intermediate Issue work
   -> explicit agent run closeout
+  -> final version PR with PR-level review
   -> human acceptance
 ```
 
@@ -61,19 +62,21 @@ Every material agent run must end in one explicit state:
 - `test_failed`;
 - `interrupted_incomplete`.
 
-Before ending, record the branch, target base branch, linked Issue or plan, changed files, latest verification commands and outcomes, current micro-plan step, next action, review status, and residual risk.
+Before ending, record the branch, target base branch, linked Issue or plan, changed files, latest verification commands and outcomes, current micro-plan step, next action, isolated reviewer budget status, final PR-level review status when applicable, and residual risk.
 
-For material code work, `completed` and `checkpoint_completed_continue` require independent review to be complete, or require an explicitly recorded independent-review limitation. If review is pending, use `review_waiting` or `checkpoint_review_waiting_continue`.
+For material code work, `completed` and `checkpoint_completed_continue` require the applicable review policy to be complete, or require an explicitly recorded review limitation. Intermediate Issue work uses the PRD/version batch review budget. Final version completion requires PR-level review on the final version PR when available.
 
 A dirty worktree, partial PR, unpushed branch, unfinished tests, or prior agent session without closeout is `interrupted_incomplete`. Recover it before starting competing work.
 
-## Review
+## Review Budget And Final Gate
 
-Self-review is preflight. Independent review should run automatically after PR creation.
+Self-review is preflight. It cannot satisfy the isolated reviewer budget or the final PR-level review gate.
 
-After requesting PR-level review, verify that it actually started. For GitHub Codex review, use `python3 scripts/check_github_review_gate.py --repo owner/name --pr <number> --wait-seconds 600`. A plain `mentioned` event is not a review signal.
+Intermediate Issue PRs do not trigger PR-level review by default. One PRD/version batch may use at most three isolated reviewer subagent/session passes total for implementation work: one initial review plus up to two re-review passes after fixes. PRD/version-plan review passes do not count against this budget.
 
-If PR-level review is unavailable, blocked, not configured, mention-only after the checker timeout, `integration_not_configured`, or not yet possible because no PR exists for a material checkpoint, open an isolated reviewer subagent/session when the runtime supports it. Local self-review alone cannot satisfy the independent review gate.
+P0/P1 findings from isolated review are fixed or rejected only with evidence. P2/P3 findings may be fixed or recorded as residual risk/backlog. If the three-pass budget is exhausted while unresolved P0/P1 findings remain, stop as `blocked_needs_human` or record an explicit risk decision.
+
+The final version PR, such as `version/vNext -> main`, triggers PR-level review when available. After requesting PR-level review, verify that it actually started. For GitHub Codex review, use `python3 scripts/check_github_review_gate.py --repo owner/name --pr <number> --wait-seconds 600`. A plain `mentioned` event is not a review signal. Final review/fix/re-review cycles are not limited by the isolated reviewer budget.
 
 If no independent reviewer is available, record that limitation as a review-gate blocker or fallback before using a local second-pass review.
 

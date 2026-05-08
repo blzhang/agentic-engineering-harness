@@ -26,10 +26,11 @@ natural-language requirement
   -> strict RED/GREEN/REFACTOR implementation
   -> agent preflight self-review
   -> draft PR targeting the version branch
-  -> CI and automatic independent review
-  -> agent fixes review findings and reruns checks
+  -> CI and capped isolated reviewer budget for intermediate Issue work
+  -> agent fixes P0/P1 review findings and reruns checks
   -> explicit agent run closeout
   -> human accepts or rejects result
+  -> final version PR receives PR-level review
   -> version branch merges to main only after version acceptance
 ```
 
@@ -129,8 +130,8 @@ When the active objective is a whole PRD, version plan, milestone, or large requ
 
 Use checkpoint states inside a large objective:
 
-- `checkpoint_completed_continue`: one slice is implemented, verified, self-reviewed, and reviewed when independent review is required; choose the next unfinished ready item.
-- `checkpoint_review_waiting_continue`: one slice is implemented, verified, and ready for PR-level review or isolated reviewer subagent/session review while more objective work remains.
+- `checkpoint_completed_continue`: one slice is implemented, verified, self-reviewed, and covered by the current batch review policy; choose the next unfinished ready item.
+- `checkpoint_review_waiting_continue`: one slice is implemented, verified, and ready for the next isolated reviewer subagent/session pass while more objective work remains and the batch still has review budget.
 - `status_answered_continue`: the human asked for status; answer briefly and continue unless they explicitly said to pause, stop, only answer, or not continue.
 
 During a large objective, the agent may stop only for full objective completion, a required human gate, a real blocker, unresolved test failure, explicit human pause/stop, or runtime interruption. Questions like "is it done?" or "what remains?" are status requests, not stop commands.
@@ -153,9 +154,9 @@ Every material run must end in one explicit state:
 - `test_failed`;
 - `interrupted_incomplete`.
 
-For material code work, `completed` and `checkpoint_completed_continue` require independent review to be complete, or require an explicitly recorded independent-review limitation. If review is pending, use `review_waiting` or `checkpoint_review_waiting_continue`.
+For material code work, `completed` and `checkpoint_completed_continue` require the applicable review policy to be complete, or require an explicitly recorded review limitation. Intermediate Issue work uses the PRD/version batch review budget. Final version completion requires PR-level review on the final version PR when available.
 
-Before ending, the agent must record the current branch, target base branch, linked Issue or plan, changed files, latest verification commands and outcomes, current micro-plan step, next action, review status, and residual risk.
+Before ending, the agent must record the current branch, target base branch, linked Issue or plan, changed files, latest verification commands and outcomes, current micro-plan step, next action, isolated reviewer budget status, final PR-level review status when applicable, and residual risk.
 
 A dirty worktree, partial PR, unpushed branch, unfinished test run, or prior session with no closeout must be treated as `interrupted_incomplete`. The next agent must recover by reading status, diffs, evidence, and the linked Issue or plan before continuing. It must not restart, overwrite, or revert unfinished work unless the human explicitly asks.
 
@@ -175,12 +176,14 @@ If a true red phase is impossible, the Issue or PR must state why and provide th
 
 ## Review Rule
 
-Agent self-review is preflight only. It catches low-level gaps before PR publication and cannot satisfy the independent review gate.
+Agent self-review is preflight only. It catches low-level gaps before PR publication and cannot satisfy the isolated reviewer budget or final PR-level review gate.
 
-Independent review should start automatically after PR creation. The implementing agent must verify that PR-level review actually started; a plain mention event is not sufficient evidence. For GitHub Codex review, use `python3 scripts/check_github_review_gate.py --repo owner/name --pr <number> --wait-seconds 600`.
+Intermediate Issue PRs do not trigger PR-level review by default. Instead, use a capped isolated reviewer budget for implementation work inside one PRD/version batch. A batch may use at most three isolated reviewer subagent/session passes total: one initial review plus at most two re-review passes after fixes. PRD/version-plan review passes do not count against this implementation budget.
 
-If PR-level review is unavailable, blocked, not configured, mention-only after the checker timeout, `integration_not_configured`, or not yet possible because no PR exists for a material checkpoint, the implementing agent opens an isolated reviewer subagent/session when the runtime supports it.
+Each isolated reviewer pass returns findings only. The implementing agent fixes or explicitly rejects P0/P1 findings with evidence, reruns focused checks, and may request another isolated review only while the batch still has budget. P2/P3 findings may be fixed or recorded as residual risk/backlog. If the three-pass isolated reviewer budget is exhausted while unresolved P0/P1 findings remain, stop as `blocked_needs_human` or record an explicit risk decision.
 
-If neither PR-level review nor an isolated reviewer subagent/session is available, the agent records that limitation as a review-gate blocker or fallback before using a local second-pass review. The implementing agent fixes accepted findings and reruns checks.
+PR-level review is required on the final version PR, such as `version/vNext -> main`, when available. The implementing agent must verify that PR-level review actually started; a plain mention event is not sufficient evidence. For GitHub Codex review, use `python3 scripts/check_github_review_gate.py --repo owner/name --pr <number> --wait-seconds 600`. Final PR-level review/fix/re-review cycles are not limited by the isolated reviewer budget and continue until no blocking P0/P1 findings remain, or until a finding is explicitly rejected with evidence.
+
+If final PR-level review is unavailable, blocked, not configured, mention-only after the checker timeout, `integration_not_configured`, or tooling cannot verify the final review signal, the implementing agent opens an isolated reviewer subagent/session when the runtime supports it and records the limitation. If neither PR-level review nor an isolated reviewer subagent/session is available, the agent records that limitation as a review-gate blocker or fallback before using a local second-pass review.
 
 Human acceptance remains separate from review approval.

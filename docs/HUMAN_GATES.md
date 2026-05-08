@@ -18,7 +18,7 @@ These can be automated:
 - creating branches;
 - filling PR templates;
 - running CI;
-- triggering independent review;
+- using the isolated reviewer budget or triggering final PR-level review;
 - applying accepted review fixes;
 - rerunning focused checks.
 
